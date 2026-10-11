@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>应急场景监测数据可视化平台</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft Yahei, sans-serif}
+        body{background:#0f172a;color:#fff;padding:16px}
+        .header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#1e293b;border-radius:10px;margin-bottom:16px}
+        .time{font-size:18px;color:#38bdf8}
+        .container{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+        .card{background:#1e293b;padding:20px;border-radius:10px}
+        .card h3{color:#94a3b8;font-size:14px;font-weight:normal}
+        .card .num{font-size:32px;font-weight:bold;margin-top:8px;color:#38bdf8}
+        .chart-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        #chart1,#chart2{height:380px;background:#1e293b;border-radius:10px;padding:16px}
+        .scene-desc{background:#1e293b;padding:16px;border-radius:10px;margin-top:16px;line-height:1.7;color:#cbd5e1}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>应急场景监测数据可视化平台</h1>
+        <div class="time" id="nowTime"></div>
+    </div>
+    <!-- 核心指标卡片 -->
+    <div class="container">
+        <div class="card">
+            <h3>监测场景：山体滑坡隐患区</h3>
+            <div class="num">在线传感器 12台</div>
+        </div>
+        <div class="card">
+            <h3>通信网络：LoRa+4G</h3>
+            <div class="num">网络连通率 98.2%</div>
+        </div>
+        <div class="card">
+            <h3>实时位移监测</h3>
+            <div class="num">2.1 mm</div>
+        </div>
+        <div class="card">
+            <h3>告警状态</h3>
+            <div class="num" style="color:#22c55e">正常</div>
+        </div>
+    </div>
+    <!-- 图表区域 -->
+    <div class="chart-wrap">
+        <div id="chart1"></div>
+        <div id="chart2"></div>
+    </div>
+    <div class="scene-desc">
+        <h3>场景说明（应急管理专业）</h3>
+        <p>监测场景：山区边坡地质灾害监测<br>传感设备：GNSS位移传感器、倾角传感器、雨量计、土壤含水率传感器<br>信息化技术：物联网数据采集、阈值告警、时序数据可视化<br>通信网络：LoRa近距离采集，4G公网回传至云端，断网本地缓存</p>
+    </div>
+
+<script>
+// 实时时钟
+function updateTime(){
+    const t=new Date();
+    document.getElementById("nowTime").innerText = t.toLocaleString();
+}
+setInterval(updateTime,1000);
+updateTime();
+
+// 图表1 雨量时序
+const myChart1 = echarts.init(document.getElementById('chart1'));
+const option1 = {
+    title:{text:"降雨量监测时序图",left:"center",textStyle:{color:'#fff'}},
+    tooltip:{trigger:'axis'},
+    xAxis:{type:'category',data:["08:00","10:00","12:00","14:00","16:00","18:00"],axisLine:{lineStyle:{color:'#64748b'}},axisLabel:{color:'#cbd5e1'}},
+    yAxis:{type:'value',name:"mm",axisLine:{lineStyle:{color:'#64748b'}},axisLabel:{color:'#cbd5e1'}},
+    series:[{name:"降雨量",type:"line",data:[2,5,16,22,14,7],smooth:true,itemStyle:{color:"#38bdf8"}}]
+};
+myChart1.setOption(option1);
+
+//图表2 传感器在线状态饼图
+const myChart2 = echarts.init(document.getElementById('chart2'));
+const option2={
+    title:{text:"传感设备在线状态统计",left:"center",textStyle:{color:'#fff'}},
+    tooltip:{trigger:'item'},
+    series:[{
+        type:"pie",radius:"65%",
+        data:[{value:12,name:"在线",itemStyle:{color:"#22c55e"}},{value:1,name:"离线",itemStyle:{color:"#ef4444"}}]
+    }]
+};
+myChart2.setOption(option2);
+window.addEventListener('resize',()=>{myChart1.resize();myChart2.resize()})
+</script>
+</body>
+</html>
